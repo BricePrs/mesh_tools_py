@@ -9,6 +9,8 @@
  + sdl2
 
 ## How to run
- + source .env/bin/activate
- + maturin develop
- + python3 examples/example.py
+```bash
+source .env/bin/activate
+maturin develop
+python3 examples/example.py
+```
