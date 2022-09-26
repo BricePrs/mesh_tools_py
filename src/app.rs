@@ -1,9 +1,11 @@
-use crate::interface;
+use crate::{tools};
 use crate::renderer;
-use crate::renderer::geom_mngr::mesh;
+use crate::renderer::geometry::mesh;
 use ultraviolet::Vec3;
 
 use sdl2::video::GLProfile;
+use crate::renderer::Scene;
+use crate::tools::ToolManager;
 
 pub enum Action {
     Quit,
@@ -63,11 +65,17 @@ pub fn create_window(w_width: u32, w_height: u32) {
         0.,
         70_f32.to_radians(),
         w_width as f32 / w_height as f32,
-    );
+);
 
-    let shader = renderer::Shader::new("default.vsh", "default.fsh");
+    let tool_manager = tools::Visualizer::new();
+
+    let shader = renderer::Shader::new("default_colored.vsh", "default_colored.fsh");
 
     let cube = mesh::cube::new();
+    let axis = mesh::axis3d::new();
+    let mut scene = Scene::new();
+    scene.add(cube);
+    scene.add(axis);
 
     unsafe {
         gl::ClearColor(0.05, 0.05, 0.05, 1.);
@@ -81,7 +89,7 @@ pub fn create_window(w_width: u32, w_height: u32) {
         // handle events this frame
 
         let mut camera_is_moving = false;
-        for action in interface::user::handle_events(&mut event_pump) {
+        for action in tool_manager.handle_inputs(&mut event_pump) {
             match action {
                 Action::Quit => break 'main_loop,
                 Action::SwapCursorMode => {
@@ -109,21 +117,8 @@ pub fn create_window(w_width: u32, w_height: u32) {
 
         // now the events are clear
         unsafe {
-            renderer::clear_error();
-
-            gl::Clear(gl::COLOR_BUFFER_BIT);
-            shader.use_current();
-            let view = camera.get_view_matrix();
-            let projection = camera.get_projection_matrix();
-            shader.set_mat4("view", view);
-            shader.set_mat4("projection", projection);
-            //glDrawArrays(GL_TRIANGLES, 0, 7);
-
-            renderer::clear_error();
-
-            cube.draw();
-
-            renderer::get_error();
+            tool_manager.use_shader(&shader, &camera);
+            renderer::draw_scene(&scene, &shader);
         }
         // here's where we could change the world state and draw.
         win.gl_swap_window();

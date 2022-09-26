@@ -41,6 +41,7 @@ impl Mesh {
                 gl::STATIC_DRAW,
             );
 
+            // Vertex Position
             gl::VertexAttribPointer(
                 0,
                 3,
@@ -50,6 +51,17 @@ impl Mesh {
                 0 as *const _,
             );
             gl::EnableVertexAttribArray(0);
+
+            // Vertex Color
+            gl::VertexAttribPointer(
+                1,
+                3,
+                gl::FLOAT,
+                gl::FALSE,
+                size_of::<Vertex>().try_into().unwrap(),
+                (3_usize * size_of::<f32>()) as *const _,
+            );
+            gl::EnableVertexAttribArray(1);
 
             gl::BindVertexArray(0);
         }
@@ -64,3 +76,5 @@ impl Mesh {
 }
 
 pub mod cube;
+pub mod axis3d;
+pub mod colored_cube;

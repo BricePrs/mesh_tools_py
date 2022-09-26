@@ -3,6 +3,7 @@ use pyo3::prelude::*;
 mod app;
 mod interface;
 mod renderer;
+mod tools;
 
 #[pyfunction]
 fn show_window(width: u32, height: u32) -> PyResult<()> {

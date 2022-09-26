@@ -3,10 +3,20 @@ use std::io::Write;
 mod camera;
 mod shader;
 
-pub mod geom_mngr;
+pub mod geometry;
+mod scene;
 
+pub use scene::Scene;
 pub use camera::Camera;
 pub use shader::Shader;
+
+/// Erase previous draw
+/// Render the scene passed as an arg
+/// Passed shader must be in use
+pub unsafe fn draw_scene(scene: &Scene, shader: &Shader) {
+    gl::Clear(gl::COLOR_BUFFER_BIT | gl::DEPTH_BUFFER_BIT);
+    scene.draw();
+}
 
 pub fn clear_error() {
     unsafe {
