@@ -4,7 +4,7 @@ use crate::renderer::geometry::mesh;
 use ultraviolet::Vec3;
 
 use sdl2::video::GLProfile;
-use crate::renderer::Scene;
+use crate::renderer::{Scene, BatchType};
 use crate::tools::ToolManager;
 
 pub enum Action {
@@ -69,13 +69,10 @@ pub fn create_window(w_width: u32, w_height: u32) {
 
     let tool_manager = tools::Visualizer::new();
 
-    let shader = renderer::Shader::new("default_colored.vsh", "default_colored.fsh");
-
-    let cube = mesh::cube::new();
-    let axis = mesh::axis3d::new();
     let mut scene = Scene::new();
-    scene.add(cube);
-    scene.add(axis);
+    scene.add(BatchType::Default, mesh::cube::new());
+    scene.add(BatchType::Anchor, mesh::plane_grid::new());
+    scene.add(BatchType::Anchor, mesh::axis3d::new());
 
     unsafe {
         gl::ClearColor(0.05, 0.05, 0.05, 1.);
@@ -117,8 +114,9 @@ pub fn create_window(w_width: u32, w_height: u32) {
 
         // now the events are clear
         unsafe {
-            tool_manager.use_shader(&shader, &camera);
-            renderer::draw_scene(&scene, &shader);
+            gl::Enable(gl::BLEND);
+            gl::BlendFunc(gl::SRC_ALPHA, gl::ONE_MINUS_SRC_ALPHA);
+            renderer::draw_scene(&tool_manager, &camera, &scene);
         }
         // here's where we could change the world state and draw.
         win.gl_swap_window();

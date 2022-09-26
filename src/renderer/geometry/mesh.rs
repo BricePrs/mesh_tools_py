@@ -6,6 +6,7 @@ pub struct Mesh {
     vao: u32,
     vbo: u32,
     ebo: u32,
+    indices_count: i32,
 }
 
 impl Mesh {
@@ -13,6 +14,7 @@ impl Mesh {
         let mut vao = 0;
         let mut vbo = 0;
         let mut ebo = 0;
+        let vertices_nbr = indices.len() as i32;
 
         unsafe {
             gl::GenVertexArrays(1, &mut vao);
@@ -65,16 +67,17 @@ impl Mesh {
 
             gl::BindVertexArray(0);
         }
-        Self { vao, vbo, ebo }
+        Self { vao, vbo, ebo, indices_count: vertices_nbr }
     }
 
     pub unsafe fn draw(&self) {
         gl::BindVertexArray(self.vao);
         gl::BindBuffer(gl::ELEMENT_ARRAY_BUFFER, self.ebo);
-        gl::DrawElements(gl::TRIANGLES, 36, gl::UNSIGNED_INT, 0 as *const _);
+        gl::DrawElements(gl::TRIANGLES, self.indices_count, gl::UNSIGNED_INT, 0 as *const _);
     }
 }
 
 pub mod cube;
 pub mod axis3d;
 pub mod colored_cube;
+pub mod plane_grid;

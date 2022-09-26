@@ -50,6 +50,8 @@ impl Camera {
         incomplete_camera
     }
 
+    pub fn get_position(&self) -> Vec3 { self.position }
+
     pub fn get_view_matrix(&self) -> Mat4 {
         Mat4::from_euler_angles(0., -self.pitch, -self.yaw).transposed()
             * Mat4::from_translation(self.position)

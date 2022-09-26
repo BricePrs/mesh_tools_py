@@ -45,11 +45,13 @@ impl ToolManager for Visualizer {
 
     fn use_shader(&self, shader: &Shader, camera: &Camera) {
         shader.use_current();
+
         let view = camera.get_view_matrix();
         let projection = camera.get_projection_matrix();
         shader.set_mat4("u_view", view);
         shader.set_mat4("u_projection", projection);
 
+        shader.set_vec3("u_camPosition", camera.get_position())
     }
 }
 
