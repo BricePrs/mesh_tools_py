@@ -1,5 +1,4 @@
-
-use std::mem::{size_of};
+use std::mem::size_of;
 
 use super::Vertex;
 
@@ -11,13 +10,11 @@ pub struct Mesh {
 
 impl Mesh {
     pub fn new(vertices: Vec<Vertex>, indices: Vec<u32>) -> Self {
-
         let mut vao = 0;
         let mut vbo = 0;
         let mut ebo = 0;
 
         unsafe {
-            
             gl::GenVertexArrays(1, &mut vao);
             gl::GenBuffers(1, &mut vbo);
             gl::GenBuffers(1, &mut ebo);
@@ -30,25 +27,26 @@ impl Mesh {
             gl::BindBuffer(gl::ARRAY_BUFFER, vbo);
 
             gl::BufferData(
-                gl::ARRAY_BUFFER, 
-                (vertices.len()*size_of::<Vertex>()) as isize, 
-                vertices.as_ptr().cast(), 
+                gl::ARRAY_BUFFER,
+                (vertices.len() * size_of::<Vertex>()) as isize,
+                vertices.as_ptr().cast(),
                 gl::STATIC_DRAW,
             );
 
             gl::BindBuffer(gl::ELEMENT_ARRAY_BUFFER, ebo);
             gl::BufferData(
-                gl::ELEMENT_ARRAY_BUFFER, 
-                (indices.len()*size_of::<u32>()) as isize, 
-                indices.as_ptr().cast(), 
+                gl::ELEMENT_ARRAY_BUFFER,
+                (indices.len() * size_of::<u32>()) as isize,
+                indices.as_ptr().cast(),
                 gl::STATIC_DRAW,
             );
 
-            gl::VertexAttribPointer(0, 
-                3, 
-                gl::FLOAT, 
+            gl::VertexAttribPointer(
+                0,
+                3,
+                gl::FLOAT,
                 gl::FALSE,
-                size_of::<Vertex>().try_into().unwrap(), 
+                size_of::<Vertex>().try_into().unwrap(),
                 0 as *const _,
             );
             gl::EnableVertexAttribArray(0);
@@ -61,16 +59,8 @@ impl Mesh {
     pub unsafe fn draw(&self) {
         gl::BindVertexArray(self.vao);
         gl::BindBuffer(gl::ELEMENT_ARRAY_BUFFER, self.ebo);
-        gl::DrawElements(
-            gl::TRIANGLES, 
-            36, 
-            gl::UNSIGNED_INT, 
-            0 as *const _
-        );
+        gl::DrawElements(gl::TRIANGLES, 36, gl::UNSIGNED_INT, 0 as *const _);
     }
-
 }
-
-
 
 pub mod cube;

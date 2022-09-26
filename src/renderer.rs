@@ -1,17 +1,16 @@
-
 use std::io::Write;
 
-mod shader;
 mod camera;
+mod shader;
 
 pub mod geom_mngr;
 
-pub use shader::Shader;
 pub use camera::Camera;
+pub use shader::Shader;
 
 pub fn clear_error() {
     unsafe {
-        while gl::GetError() != gl::NO_ERROR {};
+        while gl::GetError() != gl::NO_ERROR {}
     }
 }
 
@@ -20,15 +19,12 @@ pub fn get_error() {
     unsafe {
         loop {
             match gl::GetError() {
-
-                gl::NO_ERROR => {
-                    match error {
-                        true => {        
-                            std::io::stdout().flush().unwrap();
-                            panic!();
-                        },
-                        false => return,
+                gl::NO_ERROR => match error {
+                    true => {
+                        std::io::stdout().flush().unwrap();
+                        panic!();
                     }
+                    false => return,
                 },
 
                 a => {
@@ -36,8 +32,6 @@ pub fn get_error() {
                     error = true;
                 }
             }
-        };
-
+        }
     }
 }
-
