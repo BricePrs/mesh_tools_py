@@ -1,12 +1,11 @@
-
 mod visualizer;
 
+use crate::app::Action;
+use crate::renderer::{Camera, Shader};
 use sdl2::EventPump;
 pub use visualizer::Visualizer;
-use crate::app::Action;
-use crate::renderer::{Shader, Camera};
 
 pub trait ToolManager {
-    fn handle_inputs(&self, event_pump: &mut EventPump) -> Vec<Action>;
-    fn use_shader(&self, shader: &Shader, camera: &Camera);
+    fn handle_inputs(&mut self, event_pump: &mut EventPump) -> Vec<Action>;
+    fn render_set_up(&mut self, scene: &mut Camera, delta_time: f32);
 }

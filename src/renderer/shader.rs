@@ -87,7 +87,7 @@ impl Shader {
         }
     }
 
-    pub fn set_mat4(&self, name: &str, val: Mat4) {
+    pub fn set_mat4(&self, name: &str, val: &Mat4) {
         unsafe {
             let c_name = ffi::CString::new(name).unwrap().into_bytes_with_nul();
             let loc = gl::GetUniformLocation(self.id, c_name.as_ptr().cast());
@@ -98,23 +98,23 @@ impl Shader {
         }
     }
 
-    pub fn set_float(&self, name: &str, val: f32) {
+    pub fn set_float(&self, name: &str, val: &f32) {
         unsafe {
             let c_name = ffi::CString::new(name).unwrap().into_bytes_with_nul();
             let loc = gl::GetUniformLocation(self.id, c_name.as_ptr().cast());
             if loc == -1 {
                 println!("Could not find location of uniform : {}", name);
             }
-            gl::Uniform1f(loc, val)
+            gl::Uniform1f(loc, val.clone())
         }
     }
 
-    pub fn set_vec3(&self, name: &str, val: Vec3) {
+    pub fn set_vec3(&self, name: &str, val: &Vec3) {
         unsafe {
             let c_name = ffi::CString::new(name).unwrap().into_bytes_with_nul();
             let loc = gl::GetUniformLocation(self.id, c_name.as_ptr().cast());
             if loc == -1 {
-                println!("Could not find location of uniform : {}", name);
+                //println!("Could not find location of uniform : {}", name);
             }
             gl::Uniform3fv(loc, 1, val.as_ptr().cast())
         }

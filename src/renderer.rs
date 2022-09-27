@@ -6,25 +6,21 @@ mod shader;
 pub mod geometry;
 mod scene;
 
-pub use scene::Scene;
 pub use camera::Camera;
-pub use shader::Shader;
 pub use scene::render_batch::BatchType;
-use crate::tools::ToolManager;
-
+pub use scene::Scene;
+pub use shader::Shader;
 
 /// Erase previous draw
 /// Render the scene passed as an arg
 /// Passed shader must be in use
-pub unsafe fn draw_scene(tool_manager: & dyn ToolManager, camera: &Camera, scene: &Scene) {
+pub unsafe fn draw_scene(scene: &Scene) {
     gl::Clear(gl::COLOR_BUFFER_BIT | gl::DEPTH_BUFFER_BIT);
-    scene.draw(tool_manager, camera);
+    scene.draw();
 }
 
 pub fn clear_error() {
-    unsafe {
-        while gl::GetError() != gl::NO_ERROR {}
-    }
+    unsafe { while gl::GetError() != gl::NO_ERROR {} }
 }
 
 pub fn get_error() {

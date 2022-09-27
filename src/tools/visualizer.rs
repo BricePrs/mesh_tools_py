@@ -1,16 +1,20 @@
 use sdl2::{keyboard::Keycode, EventPump};
-use crate::app::Action;
-use crate::renderer::{Camera, Shader};
+
 use super::ToolManager;
+
+use crate::app::Action;
+use crate::renderer::{Camera};
+use crate::controller::Controller;
+use crate::utils::Direction;
 
 
 pub struct Visualizer {
-
+    camera_controller: Controller,
 }
 
 impl ToolManager for Visualizer {
 
-    fn handle_inputs(&self, event_pump: &mut EventPump) -> Vec<Action> {
+    fn handle_inputs(&mut self, event_pump: &mut EventPump) -> Vec<Action> {
         let mut action_vec = Vec::new();
 
         for event in event_pump.poll_iter() {
@@ -19,20 +23,21 @@ impl ToolManager for Visualizer {
                 Event::Quit { .. } => action_vec.push(Action::Quit),
 
                 Event::MouseMotion { xrel, yrel, .. } => {
-                    action_vec.push(Action::CameraRotSpeed(-xrel as f32, yrel as f32));
+                    self.camera_controller.mouse_inputs[0] = -xrel as f32;
+                    self.camera_controller.mouse_inputs[1] = yrel as f32;
                 }
 
                 Event::KeyDown { keycode, .. } => {
-                    match Self::handle_key_down(keycode.unwrap()) {
-                        Option::Some(a) => action_vec.push(a),
-                        Option::None => (),
+                    match self.handle_key_down(keycode.unwrap()) {
+                        Some(a) => action_vec.push(a),
+                        None => (),
                     };
                 }
 
                 Event::KeyUp { keycode, .. } => {
-                    match Self::handle_key_up(keycode.unwrap()) {
-                        Option::Some(a) => action_vec.push(a),
-                        Option::None => (),
+                    match self.handle_key_up(keycode.unwrap()) {
+                        Some(a) => action_vec.push(a),
+                        None => (),
                     };
                 }
 
@@ -43,45 +48,64 @@ impl ToolManager for Visualizer {
         action_vec
     }
 
-    fn use_shader(&self, shader: &Shader, camera: &Camera) {
-        shader.use_current();
 
-        let view = camera.get_view_matrix();
-        let projection = camera.get_projection_matrix();
-        shader.set_mat4("u_view", view);
-        shader.set_mat4("u_projection", projection);
-
-        shader.set_vec3("u_camPosition", camera.get_position())
+    fn render_set_up(&mut self, camera: &mut Camera, delta_time: f32) {
+        self.camera_controller.apply_inputs(camera, delta_time);
     }
 }
 
-
 impl Visualizer {
-
     pub fn new() -> Self {
-        Visualizer {}
-    }
-
-    fn handle_key_down(keycode: Keycode) -> Option<Action> {
-        match keycode {
-            Keycode::Escape => Some(Action::Quit),
-            Keycode::Z => Option::Some(Action::CameraMvtSpeed(1., 0.)),
-            Keycode::Q => Option::Some(Action::CameraMvtSpeed(0., -1.)),
-            Keycode::S => Option::Some(Action::CameraMvtSpeed(-1., 0.)),
-            Keycode::D => Option::Some(Action::CameraMvtSpeed(0., 1.)),
-            Keycode::Space => Option::Some(Action::SwapCursorMode),
-
-            _ => Option::None,
+        Visualizer {
+            camera_controller: Controller::new_inertia(),
         }
     }
 
-    fn handle_key_up(keycode: Keycode) -> Option<Action> {
+    fn handle_key_down(&mut self, keycode: Keycode) -> Option<Action> {
         match keycode {
-            Keycode::Z => Option::Some(Action::CameraStop),
-            Keycode::Q => Option::Some(Action::CameraStop),
-            Keycode::S => Option::Some(Action::CameraStop),
-            Keycode::D => Option::Some(Action::CameraStop),
-            _ => Option::None,
+            Keycode::Escape => Some(Action::Quit),
+            Keycode::Space => Some(Action::SwapCursorMode),
+
+            Keycode::Z => {
+                self.camera_controller.key_inputs[1] = Direction::Positive;
+                None
+            },
+            Keycode::Q => {
+                self.camera_controller.key_inputs[0] = Direction::Negative;
+                None
+            },
+            Keycode::S => {
+                self.camera_controller.key_inputs[1] = Direction::Negative;
+                None
+            },
+            Keycode::D => {
+                self.camera_controller.key_inputs[0] = Direction::Positive;
+                None
+            },
+
+            _ => None,
+        }
+    }
+
+    fn handle_key_up(&mut self, keycode: Keycode) -> Option<Action> {
+        match keycode {
+            Keycode::Z => {
+                self.camera_controller.key_inputs[1] = Direction::Null;
+                None
+            },
+            Keycode::Q => {
+                self.camera_controller.key_inputs[0] = Direction::Null;
+                None
+            },
+            Keycode::S => {
+                self.camera_controller.key_inputs[1] = Direction::Null;
+                None
+            },
+            Keycode::D => {
+                self.camera_controller.key_inputs[0] = Direction::Null;
+                None
+            },
+            _ => None,
         }
     }
 }

@@ -1,22 +1,17 @@
-use crate::{tools};
 use crate::renderer;
 use crate::renderer::geometry::mesh;
-use ultraviolet::Vec3;
+use crate::tools;
 
-use sdl2::video::GLProfile;
-use crate::renderer::{Scene, BatchType};
+use crate::renderer::{BatchType, Scene};
 use crate::tools::ToolManager;
+use sdl2::video::GLProfile;
 
 pub enum Action {
     Quit,
-    CameraStop,
-    CameraMvtSpeed(f32, f32),
-    CameraRotSpeed(f32, f32),
     SwapCursorMode,
 }
 
 pub fn create_window(w_width: u32, w_height: u32) {
-
     let mut is_cursor_displayed: bool = false;
 
     let sdl_context = sdl2::init().unwrap();
@@ -58,18 +53,9 @@ pub fn create_window(w_width: u32, w_height: u32) {
         .mouse()
         .set_relative_mouse_mode(!is_cursor_displayed);
 
-    let mut camera = renderer::Camera::new(
-        Vec3::new(0., 0., -1.),
-        Vec3::new(0., 1., 0.),
-        0.,
-        0.,
-        70_f32.to_radians(),
-        w_width as f32 / w_height as f32,
-);
+    let mut tool_manager = tools::Visualizer::new();
 
-    let tool_manager = tools::Visualizer::new();
-
-    let mut scene = Scene::new();
+    let mut scene = Scene::new(w_width as f32, w_height as f32);
     scene.add(BatchType::Default, mesh::cube::new());
     scene.add(BatchType::Anchor, mesh::plane_grid::new());
     scene.add(BatchType::Anchor, mesh::axis3d::new());
@@ -77,48 +63,39 @@ pub fn create_window(w_width: u32, w_height: u32) {
     unsafe {
         gl::ClearColor(0.05, 0.05, 0.05, 1.);
         gl::PolygonMode(gl::FRONT_AND_BACK, gl::LINE);
+        gl::Enable(gl::BLEND);
+        gl::BlendFunc(gl::SRC_ALPHA, gl::ONE_MINUS_SRC_ALPHA);
     }
 
-    let mut camera_speed_fwd = 0.;
-    let mut camera_speed_rgt = 0.;
+    let mut frame_time = std::time::Instant::now();
 
     'main_loop: loop {
-        // handle events this frame
 
-        let mut camera_is_moving = false;
+        let delta_time = frame_time.elapsed().as_secs_f32();
+        frame_time = std::time::Instant::now();
+
         for action in tool_manager.handle_inputs(&mut event_pump) {
             match action {
+
                 Action::Quit => break 'main_loop,
+
                 Action::SwapCursorMode => {
                     is_cursor_displayed = !is_cursor_displayed;
                     sdl_context
                         .mouse()
                         .set_relative_mouse_mode(!is_cursor_displayed);
                 }
-                Action::CameraStop => {
-                    if !camera_is_moving {
-                        camera_speed_fwd = 0.;
-                        camera_speed_rgt = 0.;
-                    }
-                }
-                Action::CameraMvtSpeed(x, y) => {
-                    camera_speed_fwd = x;
-                    camera_speed_rgt = y;
-                    camera_is_moving = true;
-                }
-                Action::CameraRotSpeed(x, y) => camera.rotate(x, y),
+
             }
         }
 
-        camera.translate(camera_speed_fwd, camera_speed_rgt);
+        tool_manager.render_set_up(scene.get_camera(), delta_time);
 
-        // now the events are clear
         unsafe {
-            gl::Enable(gl::BLEND);
-            gl::BlendFunc(gl::SRC_ALPHA, gl::ONE_MINUS_SRC_ALPHA);
-            renderer::draw_scene(&tool_manager, &camera, &scene);
+            renderer::draw_scene(&scene);
         }
-        // here's where we could change the world state and draw.
+
         win.gl_swap_window();
+
     }
 }

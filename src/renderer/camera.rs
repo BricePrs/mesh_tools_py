@@ -1,4 +1,6 @@
-use ultraviolet::{projection::rh_yup::perspective_gl, Mat4, Vec3};
+use ultraviolet::{Mat4, projection::rh_yup::perspective_gl, Vec3};
+
+pub use crate::controller::Controller;
 
 pub struct Camera {
     position: Vec3,
@@ -29,7 +31,7 @@ impl Camera {
         aspect: f32,
     ) -> Self {
         let mut incomplete_camera = Self {
-            position: position,
+            position,
 
             fwd_dir: Vec3::zero(),
             rgt_dir: Vec3::zero(),
@@ -37,20 +39,22 @@ impl Camera {
 
             world_up,
 
-            pitch: pitch,
-            yaw: yaw,
+            pitch,
+            yaw,
 
-            rot_speed: 0.01_f32,
-            mvt_speed: 0.02_f32,
+            rot_speed: 3.0_f32,
+            mvt_speed: 3.0_f32,
 
-            fov: fov,
-            aspect: aspect,
+            fov,
+            aspect,
         };
         incomplete_camera.update_camera_base();
         incomplete_camera
     }
 
-    pub fn get_position(&self) -> Vec3 { self.position }
+    pub fn get_position(&self) -> Vec3 {
+        self.position
+    }
 
     pub fn get_view_matrix(&self) -> Mat4 {
         Mat4::from_euler_angles(0., -self.pitch, -self.yaw).transposed()

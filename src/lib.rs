@@ -4,6 +4,8 @@ mod app;
 mod interface;
 mod renderer;
 mod tools;
+mod controller;
+mod utils;
 
 #[pyfunction]
 fn show_window(width: u32, height: u32) -> PyResult<()> {

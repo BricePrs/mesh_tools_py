@@ -67,17 +67,27 @@ impl Mesh {
 
             gl::BindVertexArray(0);
         }
-        Self { vao, vbo, ebo, indices_count: vertices_nbr }
+        Self {
+            vao,
+            vbo,
+            ebo,
+            indices_count: vertices_nbr,
+        }
     }
 
     pub unsafe fn draw(&self) {
         gl::BindVertexArray(self.vao);
         gl::BindBuffer(gl::ELEMENT_ARRAY_BUFFER, self.ebo);
-        gl::DrawElements(gl::TRIANGLES, self.indices_count, gl::UNSIGNED_INT, 0 as *const _);
+        gl::DrawElements(
+            gl::TRIANGLES,
+            self.indices_count,
+            gl::UNSIGNED_INT,
+            0 as *const _,
+        );
     }
 }
 
-pub mod cube;
 pub mod axis3d;
 pub mod colored_cube;
+pub mod cube;
 pub mod plane_grid;

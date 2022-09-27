@@ -7,10 +7,7 @@ pub enum BatchType {
     Anchor,
 }
 
-pub(crate) static BATCH_TYPES: [BatchType; 2] = [
-    BatchType::Default,
-    BatchType::Anchor,
-];
+pub(crate) static BATCH_TYPES: [BatchType; 2] = [BatchType::Default, BatchType::Anchor];
 
 pub struct RenderBatch {
     pub objects: Vec<Mesh>,
@@ -18,15 +15,16 @@ pub struct RenderBatch {
 }
 
 impl RenderBatch {
-
     pub fn map(batch_type: &BatchType) -> Self {
         let shader = match batch_type {
             BatchType::Default => Shader::new("default_colored.vsh", "default_colored.fsh"),
-            BatchType::Anchor => Shader::new("default_colored_gizmos.vsh", "default_colored_gizmos.fsh"),
+            BatchType::Anchor => {
+                Shader::new("default_colored_gizmos.vsh", "default_colored_gizmos.fsh")
+            }
         };
         Self {
             shader,
-            objects: Vec::new()
+            objects: Vec::new(),
         }
     }
 
