@@ -85,6 +85,10 @@ impl Camera {
         self.update_camera_base();
     }
 
+    pub fn project_onto_sphere(&mut self, center: Vec3, radius: f32) {
+        self.position = -self.fwd_dir*radius+center;
+    }
+
     fn update_camera_base(&mut self) {
         self.fwd_dir = Vec3::new(
             self.yaw.sin() * self.pitch.cos(),

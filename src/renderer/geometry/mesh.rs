@@ -1,6 +1,6 @@
 use std::mem::size_of;
 
-use super::Vertex;
+pub use super::Vertex;
 
 pub struct Mesh {
     vao: u32,

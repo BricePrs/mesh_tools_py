@@ -57,7 +57,8 @@ impl ToolManager for Visualizer {
 impl Visualizer {
     pub fn new() -> Self {
         Visualizer {
-            camera_controller: Controller::new_inertia(),
+            camera_controller: Controller::new_look_at_anchor(),
+            //camera_controller: Controller::new_inertia(),
         }
     }
 

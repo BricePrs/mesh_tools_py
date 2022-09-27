@@ -1,4 +1,4 @@
-use crate::renderer;
+use crate::{interface, renderer};
 use crate::renderer::geometry::mesh;
 use crate::tools;
 
@@ -56,7 +56,10 @@ pub fn create_window(w_width: u32, w_height: u32) {
     let mut tool_manager = tools::Visualizer::new();
 
     let mut scene = Scene::new(w_width as f32, w_height as f32);
-    scene.add(BatchType::Default, mesh::cube::new());
+
+    scene.add(BatchType::Default, interface::file::load_mesh("HumanHead.ply"));
+    //scene.add(BatchType::Default, mesh::cube::new());
+
     scene.add(BatchType::Anchor, mesh::plane_grid::new());
     scene.add(BatchType::Anchor, mesh::axis3d::new());
 
