@@ -53,9 +53,9 @@ pub fn create_window(w_width: u32, w_height: u32) {
         .mouse()
         .set_relative_mouse_mode(!is_cursor_displayed);
 
-    let mut tool_manager = tools::Visualizer::new();
+    let mut tool_manager = tools::Visualizer::new(w_width as f32, w_height as f32);
 
-    let mut scene = Scene::new(w_width as f32, w_height as f32);
+    let mut scene = Scene::new();
 
     scene.add(BatchType::Default, interface::file::load_mesh("HumanHead.ply"));
     //scene.add(BatchType::Default, mesh::cube::new());
@@ -64,7 +64,7 @@ pub fn create_window(w_width: u32, w_height: u32) {
     scene.add(BatchType::Anchor, mesh::axis3d::new());
 
     unsafe {
-        gl::ClearColor(0.05, 0.05, 0.05, 1.);
+        gl::ClearColor(0.25, 0.25, 0.25, 1.);
         gl::PolygonMode(gl::FRONT_AND_BACK, gl::LINE);
         gl::Enable(gl::BLEND);
         gl::BlendFunc(gl::SRC_ALPHA, gl::ONE_MINUS_SRC_ALPHA);
@@ -76,6 +76,7 @@ pub fn create_window(w_width: u32, w_height: u32) {
 
         let delta_time = frame_time.elapsed().as_secs_f32();
         frame_time = std::time::Instant::now();
+        println!("{}Hz",1./delta_time);
 
         for action in tool_manager.handle_inputs(&mut event_pump) {
             match action {
@@ -92,10 +93,10 @@ pub fn create_window(w_width: u32, w_height: u32) {
             }
         }
 
-        tool_manager.render_set_up(scene.get_camera(), delta_time);
+        tool_manager.render_set_up(delta_time);
 
         unsafe {
-            renderer::draw_scene(&scene);
+            renderer::draw_scene(&scene, tool_manager.get_controller().get_camera());
         }
 
         win.gl_swap_window();

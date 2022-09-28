@@ -14,9 +14,9 @@ pub use shader::Shader;
 /// Erase previous draw
 /// Render the scene passed as an arg
 /// Passed shader must be in use
-pub unsafe fn draw_scene(scene: &Scene) {
+pub unsafe fn draw_scene(scene: &Scene, camera: &Camera) {
     gl::Clear(gl::COLOR_BUFFER_BIT | gl::DEPTH_BUFFER_BIT);
-    scene.draw();
+    scene.draw(camera);
 }
 
 pub fn clear_error() {

@@ -2,6 +2,7 @@ use ultraviolet::{Mat4, projection::rh_yup::perspective_gl, Vec3};
 
 pub use crate::controller::Controller;
 
+#[derive(Copy, Clone)] // Not efficient TODO: improve management
 pub struct Camera {
     position: Vec3,
 
@@ -42,8 +43,8 @@ impl Camera {
             pitch,
             yaw,
 
-            rot_speed: 3.0_f32,
-            mvt_speed: 3.0_f32,
+            rot_speed: 5.0_f32,
+            mvt_speed: 20.0_f32,
 
             fov,
             aspect,
@@ -52,8 +53,8 @@ impl Camera {
         incomplete_camera
     }
 
-    pub fn get_position(&self) -> Vec3 {
-        self.position
+    pub fn get_position(&self) -> &Vec3 {
+        &self.position
     }
 
     pub fn get_view_matrix(&self) -> Mat4 {
@@ -102,4 +103,8 @@ impl Camera {
     pub fn set_aspect_ratio(&mut self, aspect: f32) {
         self.aspect = aspect;
     }
+
+    pub fn get_fwd_dir(&self) -> Vec3 { self.fwd_dir }
+    pub fn get_rgt_dir(&self) -> Vec3 { self.rgt_dir }
+    pub fn get_up_dir(&self) -> Vec3 { self.up_dir }
 }

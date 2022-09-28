@@ -1,10 +1,11 @@
 use sdl2::{keyboard::Keycode, EventPump};
+use ultraviolet::Vec3;
 
 use super::ToolManager;
 
 use crate::app::Action;
 use crate::renderer::{Camera};
-use crate::controller::Controller;
+use crate::controller::{Controller, ControlMode};
 use crate::utils::Direction;
 
 
@@ -13,6 +14,8 @@ pub struct Visualizer {
 }
 
 impl ToolManager for Visualizer {
+
+    fn get_controller(&self) -> &Controller { &self.camera_controller }
 
     fn handle_inputs(&mut self, event_pump: &mut EventPump) -> Vec<Action> {
         let mut action_vec = Vec::new();
@@ -25,6 +28,10 @@ impl ToolManager for Visualizer {
                 Event::MouseMotion { xrel, yrel, .. } => {
                     self.camera_controller.mouse_inputs[0] = -xrel as f32;
                     self.camera_controller.mouse_inputs[1] = yrel as f32;
+                }
+
+                Event::MouseWheel { y, .. } => {
+                    self.camera_controller.mouse_inputs[2] = y as f32;
                 }
 
                 Event::KeyDown { keycode, .. } => {
@@ -49,18 +56,44 @@ impl ToolManager for Visualizer {
     }
 
 
-    fn render_set_up(&mut self, camera: &mut Camera, delta_time: f32) {
-        self.camera_controller.apply_inputs(camera, delta_time);
+    fn render_set_up(&mut self, delta_time: f32) {
+        self.camera_controller.apply_inputs(delta_time);
     }
 }
 
 impl Visualizer {
-    pub fn new() -> Self {
+    pub fn new(w_width: f32, w_height: f32) -> Self {
+        let camera = Camera::new(
+            Vec3::new(0., 0., -1.),
+            Vec3::new(0., 1., 0.),
+            0.,
+            0.,
+            70_f32.to_radians(),
+            w_width / w_height,
+        );
         Visualizer {
-            camera_controller: Controller::new_look_at_anchor(),
+            camera_controller: Controller::new_look_at_anchor(camera, Vec3::zero(), 1., 10.),
             //camera_controller: Controller::new_inertia(),
         }
     }
+
+    pub fn switch_controller(&mut self) {
+        match self.camera_controller.get_mode() {
+            ControlMode::Absolute(data) => {
+                let radius = data.get_scale();
+                let camera = self.camera_controller.get_camera();
+                let center = camera.get_position().clone() + camera.get_fwd_dir() * radius;
+                self.camera_controller = Controller::new_look_at_anchor(camera.clone(), center, radius, 10.);
+            }
+            ControlMode::LookAtAnchor(data) => {
+                self.camera_controller = Controller::new_absolute(
+                    self.camera_controller.get_camera().clone(),
+                    data.get_radius(),
+                );
+            }
+        }
+    }
+
 
     fn handle_key_down(&mut self, keycode: Keycode) -> Option<Action> {
         match keycode {
@@ -106,6 +139,11 @@ impl Visualizer {
                 self.camera_controller.key_inputs[0] = Direction::Null;
                 None
             },
+
+            Keycode::Tab => {
+                self.switch_controller();
+                None
+            }
             _ => None,
         }
     }
