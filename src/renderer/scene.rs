@@ -1,8 +1,10 @@
 pub(crate) mod render_batch;
+pub mod object;
 
-use crate::renderer::geometry::mesh::Mesh;
-use render_batch::{RenderBatch, BATCH_TYPES};
 use std::collections::HashMap;
+
+use render_batch::{RenderBatch, BATCH_TYPES};
+use object::Object;
 
 
 pub use render_batch::BatchType;
@@ -24,7 +26,7 @@ impl Scene {
         }
     }
 
-    pub fn add(&mut self, batch_type: BatchType, object: Mesh) {
+    pub fn add(&mut self, batch_type: BatchType, object: Object) {
         self.render_queue.get_mut(&batch_type).unwrap().push(object);
     }
 
@@ -45,7 +47,8 @@ impl Scene {
             shader.set_vec3("u_camPosition", camera.get_position());
 
             for object in &render_batch.objects {
-                object.draw();
+                shader.set_mat4("u_transform", object.get_transform());
+                object.get_mesh().draw();
             }
         }
     }

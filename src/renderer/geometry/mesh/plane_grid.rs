@@ -1,3 +1,5 @@
+use ultraviolet::Mat4;
+use crate::renderer::scene::object::Object;
 use super::{Mesh, Vertex};
 
 static LINE_NBR: i32 = 500;
@@ -37,6 +39,7 @@ fn indices() -> Vec<u32> {
     indices
 }
 
-pub fn new() -> Mesh {
-    Mesh::new(vertices(), indices())
+pub fn new() -> Object {
+    let mesh = Mesh::new(vertices(), indices());
+    Object::new(mesh, Mat4::identity())
 }

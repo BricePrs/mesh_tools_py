@@ -1,4 +1,6 @@
+use ultraviolet::Mat4;
 use super::{Mesh, Vertex};
+use crate::renderer::scene::object::Object;
 
 fn vertices() -> Vec<Vertex> {
     vec![
@@ -15,6 +17,7 @@ fn indices() -> Vec<u32> {
     vec![0, 1, 1, 2, 3, 3, 4, 5, 5]
 }
 
-pub fn new() -> Mesh {
-    Mesh::new(vertices(), indices())
+pub fn new() -> Object {
+    let mesh = Mesh::new(vertices(), indices());
+    Object::new(mesh, Mat4::identity())
 }

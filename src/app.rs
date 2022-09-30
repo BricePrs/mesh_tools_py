@@ -1,3 +1,5 @@
+use std::io::{stdout, Write};
+use sdl2::libc::fflush;
 use crate::{interface, renderer};
 use crate::renderer::geometry::mesh;
 use crate::tools;
@@ -12,7 +14,7 @@ pub enum Action {
 }
 
 pub fn create_window(w_width: u32, w_height: u32) {
-    let mut is_cursor_displayed: bool = false;
+    let mut is_cursor_displayed: bool = true;
 
     let sdl_context = sdl2::init().unwrap();
     let video_subsystem = sdl_context.video().unwrap();
@@ -57,7 +59,7 @@ pub fn create_window(w_width: u32, w_height: u32) {
 
     let mut scene = Scene::new();
 
-    scene.add(BatchType::Default, interface::file::load_mesh("HumanHead.ply"));
+    scene.add(BatchType::Default, interface::file::load_mesh("flavieux.ply", 100.));
     //scene.add(BatchType::Default, mesh::cube::new());
 
     scene.add(BatchType::Anchor, mesh::plane_grid::new());
@@ -66,17 +68,30 @@ pub fn create_window(w_width: u32, w_height: u32) {
     unsafe {
         gl::ClearColor(0.25, 0.25, 0.25, 1.);
         gl::PolygonMode(gl::FRONT_AND_BACK, gl::LINE);
+        gl::PolygonMode(gl::FRONT, gl::LINE);
+        gl::Enable(gl::DEPTH_TEST);
         gl::Enable(gl::BLEND);
+        gl::DepthFunc(gl::LESS);
         gl::BlendFunc(gl::SRC_ALPHA, gl::ONE_MINUS_SRC_ALPHA);
     }
 
     let mut frame_time = std::time::Instant::now();
 
+    let mut mean_delta_time = 0.;
+    let mut frame_count = 0;
+
     'main_loop: loop {
 
         let delta_time = frame_time.elapsed().as_secs_f32();
         frame_time = std::time::Instant::now();
-        println!("{}Hz",1./delta_time);
+        frame_count += 1;
+        mean_delta_time += delta_time;
+        if frame_count > 100 {
+            print!("\r{}Hz", frame_count as f32 / mean_delta_time);
+            frame_count = 0;
+            mean_delta_time = 0.;
+            stdout().flush().expect("Stdout flush error");
+        }
 
         for action in tool_manager.handle_inputs(&mut event_pump) {
             match action {

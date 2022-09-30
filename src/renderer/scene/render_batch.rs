@@ -1,4 +1,5 @@
 use crate::renderer::geometry::mesh::Mesh;
+use crate::renderer::scene::object::Object;
 use crate::renderer::Shader;
 
 #[derive(Clone, PartialEq, Eq, Hash)]
@@ -10,7 +11,7 @@ pub enum BatchType {
 pub(crate) static BATCH_TYPES: [BatchType; 2] = [BatchType::Default, BatchType::Anchor];
 
 pub struct RenderBatch {
-    pub objects: Vec<Mesh>,
+    pub objects: Vec<Object>,
     shader: Shader,
 }
 
@@ -28,7 +29,7 @@ impl RenderBatch {
         }
     }
 
-    pub fn push(&mut self, object: Mesh) {
+    pub fn push(&mut self, object: Object) {
         self.objects.push(object)
     }
 

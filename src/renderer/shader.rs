@@ -92,7 +92,7 @@ impl Shader {
             let c_name = ffi::CString::new(name).unwrap().into_bytes_with_nul();
             let loc = gl::GetUniformLocation(self.id, c_name.as_ptr().cast());
             if loc == -1 {
-                println!("Could not find location of uniform : {}", name);
+                //println!("Could not find location of uniform : {}", name);
             }
             gl::UniformMatrix4fv(loc, 1, gl::FALSE, val.as_ptr().cast())
         }
@@ -103,7 +103,7 @@ impl Shader {
             let c_name = ffi::CString::new(name).unwrap().into_bytes_with_nul();
             let loc = gl::GetUniformLocation(self.id, c_name.as_ptr().cast());
             if loc == -1 {
-                println!("Could not find location of uniform : {}", name);
+                //println!("Could not find location of uniform : {}", name);
             }
             gl::Uniform1f(loc, val.clone())
         }

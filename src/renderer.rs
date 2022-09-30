@@ -4,7 +4,7 @@ mod camera;
 mod shader;
 
 pub mod geometry;
-mod scene;
+pub mod scene;
 
 pub use camera::Camera;
 pub use scene::render_batch::BatchType;
