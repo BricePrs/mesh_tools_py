@@ -21,4 +21,5 @@ void main() {
             FragColor = texelFetch(u_textures[i], iCoords, 0);
         }
     }
+    FragColor = vec4(uv, 0., 1.);
 }

@@ -88,7 +88,6 @@ impl Camera {
     }
 
     pub fn project_onto_sphere(&mut self, center: Vec3, radius: f32) {
-        println!("oui");
         self.position = -self.fwd_dir*radius+center;
     }
 

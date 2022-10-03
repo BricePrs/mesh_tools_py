@@ -58,7 +58,7 @@ pub fn create_window(w_width: u32, w_height: u32) {
 
     let mut tool_manager = tools::Visualizer::new(w_width as f32, w_height as f32);
 
-    //let gui = Gui::new(w_width, w_height);
+    let gui = Gui::new(w_width, w_height);
 
     let mut scene = Scene::new();
 
@@ -114,7 +114,7 @@ pub fn create_window(w_width: u32, w_height: u32) {
 
         unsafe {
             renderer::draw_scene(&scene, tool_manager.get_controller().get_camera());
-            //gui.render();
+            gui.render();
         }
 
         win.gl_swap_window();
