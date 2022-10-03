@@ -5,6 +5,7 @@ mod shader;
 
 pub mod geometry;
 pub mod scene;
+pub mod texture;
 
 pub use camera::Camera;
 pub use scene::render_batch::BatchType;
@@ -16,6 +17,7 @@ pub use shader::Shader;
 /// Passed shader must be in use
 pub unsafe fn draw_scene(scene: &Scene, camera: &Camera) {
     gl::Clear(gl::COLOR_BUFFER_BIT | gl::DEPTH_BUFFER_BIT);
+    gl::PolygonMode(gl::FRONT_AND_BACK, gl::LINE);
     scene.draw(camera);
 }
 

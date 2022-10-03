@@ -26,7 +26,6 @@ impl LookAtAnchorData {
 
 impl ControllerData for LookAtAnchorData {
 
-
     fn apply_inputs(&mut self, camera: &mut Camera, axis_key: &[f32; 2], axis_mouse: &[f32; 3]) {
         self.center += (- camera.get_rgt_dir() * axis_key[0] + camera.get_up_dir() * axis_key[1])*self.speed;
         self.radius *= 1.+0.1*sign(axis_mouse[2]);

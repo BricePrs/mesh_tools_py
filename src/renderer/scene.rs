@@ -3,7 +3,7 @@ pub mod object;
 
 use std::collections::HashMap;
 
-use render_batch::{RenderBatch, BATCH_TYPES};
+use render_batch::{BATCH_TYPES, RenderBatch};
 use object::Object;
 
 

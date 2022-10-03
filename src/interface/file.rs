@@ -2,7 +2,7 @@ use crate::renderer::geometry::mesh::{Mesh, Vertex};
 use std::fs::File;
 use std::io::{BufRead, BufReader, Lines};
 use ultraviolet::Mat4;
-use crate::renderer::scene::object::Object;
+use crate::renderer::{texture::Texture, scene::object::Object};
 
 
 pub fn go_to_tag(lines: &mut Lines<BufReader<File>>, tag: &str) -> Vec<String> {
@@ -80,3 +80,6 @@ pub fn load_mesh(file_name: &str, scale: f32) -> Object {
     Object::new(mesh, transform)
 }
 
+pub fn load_texture(filename: &str) -> Texture {
+    todo!();
+}

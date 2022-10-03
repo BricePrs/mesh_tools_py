@@ -7,6 +7,7 @@ use crate::tools;
 use crate::renderer::{BatchType, Scene};
 use crate::tools::ToolManager;
 use sdl2::video::GLProfile;
+use crate::gui::Gui;
 
 pub enum Action {
     Quit,
@@ -57,18 +58,19 @@ pub fn create_window(w_width: u32, w_height: u32) {
 
     let mut tool_manager = tools::Visualizer::new(w_width as f32, w_height as f32);
 
+    //let gui = Gui::new(w_width, w_height);
+
     let mut scene = Scene::new();
 
-    scene.add(BatchType::Default, interface::file::load_mesh("flavieux.ply", 100.));
-    //scene.add(BatchType::Default, mesh::cube::new());
+    //scene.add(BatchType::Default, interface::file::load_mesh("flavieux.ply", 100.));
+    scene.add(BatchType::Default, mesh::cube::new());
 
     scene.add(BatchType::Anchor, mesh::plane_grid::new());
     scene.add(BatchType::Anchor, mesh::axis3d::new());
 
+
     unsafe {
         gl::ClearColor(0.25, 0.25, 0.25, 1.);
-        gl::PolygonMode(gl::FRONT_AND_BACK, gl::LINE);
-        gl::PolygonMode(gl::FRONT, gl::LINE);
         gl::Enable(gl::DEPTH_TEST);
         gl::Enable(gl::BLEND);
         gl::DepthFunc(gl::LESS);
@@ -112,6 +114,7 @@ pub fn create_window(w_width: u32, w_height: u32) {
 
         unsafe {
             renderer::draw_scene(&scene, tool_manager.get_controller().get_camera());
+            //gui.render();
         }
 
         win.gl_swap_window();

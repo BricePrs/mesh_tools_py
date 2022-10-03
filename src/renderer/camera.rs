@@ -1,8 +1,9 @@
+use std::io::{stdout, Write};
 use ultraviolet::{Mat4, projection::rh_yup::perspective_gl, Vec3};
 
 pub use crate::controller::Controller;
 
-#[derive(Copy, Clone)] // Not efficient TODO: improve management
+#[derive(Copy, Clone)]
 pub struct Camera {
     position: Vec3,
 
@@ -63,7 +64,6 @@ impl Camera {
     }
 
     pub fn get_projection_matrix(&self) -> Mat4 {
-        //Mat4::identity()
         perspective_gl(self.fov, self.aspect, 0.1_f32, 100.0_f32)
     }
 
@@ -73,6 +73,7 @@ impl Camera {
     }
 
     pub fn rotate(&mut self, delta_x: f32, delta_y: f32) {
+
         self.yaw += self.rot_speed * delta_x;
         self.pitch += self.rot_speed * delta_y;
 
@@ -87,6 +88,7 @@ impl Camera {
     }
 
     pub fn project_onto_sphere(&mut self, center: Vec3, radius: f32) {
+        println!("oui");
         self.position = -self.fwd_dir*radius+center;
     }
 

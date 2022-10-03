@@ -1,6 +1,6 @@
 use gl::types::*;
 use std::{ffi, fs::read_to_string};
-use ultraviolet::{Mat4, Vec3};
+use ultraviolet::{IVec2, Mat4, Vec3};
 
 pub struct Shader {
     id: GLuint,
@@ -119,4 +119,16 @@ impl Shader {
             gl::Uniform3fv(loc, 1, val.as_ptr().cast())
         }
     }
+
+    pub fn set_ivec2(&self, name: &str, val: &IVec2) {
+        unsafe {
+            let c_name = ffi::CString::new(name).unwrap().into_bytes_with_nul();
+            let loc = gl::GetUniformLocation(self.id, c_name.as_ptr().cast());
+            if loc == -1 {
+                //println!("Could not find location of uniform : {}", name);
+            }
+            gl::Uniform2iv(loc, 1, val.as_ptr().cast())
+        }
+    }
+
 }
