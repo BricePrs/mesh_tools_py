@@ -1,20 +1,16 @@
 use std::ffi::c_void;
-use std::fs::File;
-use std::io::{BufRead, BufReader};
-use image::{self, ImageBuffer, ImageFormat, Rgba, RgbaImage};
 
 use gl::types::GLenum;
 
-pub struct Texture  {
+pub struct Texture {
     id: u32,
 }
 
 impl Texture {
-
-
     pub fn new(file_name: &str) -> Self {
         let buffer = image::open(format!("textures/{}", file_name))
-            .unwrap().to_rgba8();
+            .unwrap()
+            .to_rgba8();
 
         let size = buffer.dimensions();
 
@@ -23,10 +19,26 @@ impl Texture {
             gl::GenTextures(1, &mut id);
             gl::BindTexture(gl::TEXTURE_2D, id);
             // set the texture wrapping/filtering options (on the currently bound texture object)
-            gl::TexParameteri(gl::TEXTURE_2D, gl::TEXTURE_WRAP_T, gl::REPEAT.try_into().unwrap());
-            gl::TexParameteri(gl::TEXTURE_2D, gl::TEXTURE_WRAP_S, gl::REPEAT.try_into().unwrap());
-            gl::TexParameteri(gl::TEXTURE_2D, gl::TEXTURE_MIN_FILTER, gl::LINEAR_MIPMAP_LINEAR.try_into().unwrap());
-            gl::TexParameteri(gl::TEXTURE_2D, gl::TEXTURE_MAG_FILTER, gl::LINEAR.try_into().unwrap());
+            gl::TexParameteri(
+                gl::TEXTURE_2D,
+                gl::TEXTURE_WRAP_T,
+                gl::REPEAT.try_into().unwrap(),
+            );
+            gl::TexParameteri(
+                gl::TEXTURE_2D,
+                gl::TEXTURE_WRAP_S,
+                gl::REPEAT.try_into().unwrap(),
+            );
+            gl::TexParameteri(
+                gl::TEXTURE_2D,
+                gl::TEXTURE_MIN_FILTER,
+                gl::LINEAR_MIPMAP_LINEAR.try_into().unwrap(),
+            );
+            gl::TexParameteri(
+                gl::TEXTURE_2D,
+                gl::TEXTURE_MAG_FILTER,
+                gl::LINEAR.try_into().unwrap(),
+            );
             // load and generate the texture
             gl::TexImage2D(
                 gl::TEXTURE_2D,
@@ -41,9 +53,7 @@ impl Texture {
             );
             gl::GenerateMipmap(gl::TEXTURE_2D);
         }
-        Self {
-            id,
-        }
+        Self { id }
     }
     pub unsafe fn bind(&self, texture_index: GLenum) {
         gl::ActiveTexture(texture_index);

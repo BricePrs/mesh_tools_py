@@ -1,10 +1,9 @@
 mod visualizer;
 
 use crate::app::Action;
-use crate::renderer::{Camera, Shader};
+use crate::controller::Controller;
 use sdl2::EventPump;
 pub use visualizer::Visualizer;
-use crate::controller::Controller;
 
 pub trait ToolManager {
     fn get_controller(&self) -> &Controller;

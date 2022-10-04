@@ -87,6 +87,7 @@ impl Shader {
         }
     }
 
+    #[allow(dead_code)]
     pub fn set_mat4(&self, name: &str, val: &Mat4) {
         unsafe {
             let c_name = ffi::CString::new(name).unwrap().into_bytes_with_nul();
@@ -98,6 +99,7 @@ impl Shader {
         }
     }
 
+    #[allow(dead_code)]
     pub fn set_float(&self, name: &str, val: &f32) {
         unsafe {
             let c_name = ffi::CString::new(name).unwrap().into_bytes_with_nul();
@@ -109,6 +111,7 @@ impl Shader {
         }
     }
 
+    #[allow(dead_code)]
     pub fn set_vec3(&self, name: &str, val: &Vec3) {
         unsafe {
             let c_name = ffi::CString::new(name).unwrap().into_bytes_with_nul();
@@ -120,6 +123,7 @@ impl Shader {
         }
     }
 
+    #[allow(dead_code)]
     pub fn set_ivec2(&self, name: &str, val: &IVec2) {
         unsafe {
             let c_name = ffi::CString::new(name).unwrap().into_bytes_with_nul();
@@ -130,5 +134,4 @@ impl Shader {
             gl::Uniform2iv(loc, 1, val.as_ptr().cast())
         }
     }
-
 }

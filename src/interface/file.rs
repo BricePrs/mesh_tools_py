@@ -1,10 +1,10 @@
 use crate::renderer::geometry::mesh::{Mesh, Vertex};
+use crate::renderer::{scene::object::Object, texture::Texture};
 use std::fs::File;
 use std::io::{BufRead, BufReader, Lines};
 use ultraviolet::Mat4;
-use crate::renderer::{texture::Texture, scene::object::Object};
 
-
+#[allow(dead_code)]
 pub fn go_to_tag(lines: &mut Lines<BufReader<File>>, tag: &str) -> Vec<String> {
     let mut line;
     loop {
@@ -23,6 +23,7 @@ pub fn go_to_tag(lines: &mut Lines<BufReader<File>>, tag: &str) -> Vec<String> {
     line
 }
 
+#[allow(dead_code)]
 pub fn load_mesh(file_name: &str, scale: f32) -> Object {
     let mut vertices = Vec::new();
     let mut indices = Vec::new();
@@ -30,11 +31,9 @@ pub fn load_mesh(file_name: &str, scale: f32) -> Object {
     let file = File::open(format!("meshes/{}", file_name)).unwrap();
     let mut lines = BufReader::new(file).lines();
 
-
     // Go to next element line
     let line = go_to_tag(&mut lines, "element");
     let vertices_count: u32 = line[2].parse().unwrap();
-
 
     // Go to next element line
     let line = go_to_tag(&mut lines, "element");
@@ -42,44 +41,38 @@ pub fn load_mesh(file_name: &str, scale: f32) -> Object {
 
     go_to_tag(&mut lines, "end_header");
 
-
     for vertex_index in 0..vertices_count {
-        print!("\rLoading file: {}/{vertices_count}", vertex_index+1);
-        let string_values = lines
-            .next()
-            .unwrap()
-            .unwrap();
+        print!("\rLoading file: {}/{vertices_count}", vertex_index + 1);
+        let string_values = lines.next().unwrap().unwrap();
         let values = string_values
             .trim()
             .split_whitespace()
             .collect::<Vec<&str>>();
         let mut vertex_values: Vertex = [1.; 6];
         for i in 0..3 {
-            vertex_values[i] = scale*values[i].parse::<f32>().unwrap();
+            vertex_values[i] = scale * values[i].parse::<f32>().unwrap();
         }
         vertices.push(vertex_values);
     }
 
     for face_indices in 0..indices_count {
-        print!("\rLoading file: {}/{indices_count}", face_indices+1);
-        let string_values = lines
-            .next()
-            .unwrap()
-            .unwrap();
+        print!("\rLoading file: {}/{indices_count}", face_indices + 1);
+        let string_values = lines.next().unwrap().unwrap();
         let values = string_values
             .trim()
             .split_whitespace()
             .collect::<Vec<&str>>();
         for i in 0..3 {
-            indices.push(values[i+1].parse().unwrap());
+            indices.push(values[i + 1].parse().unwrap());
         }
     }
 
-    let mesh = Mesh::new (vertices, indices);
+    let mesh = Mesh::new(vertices, indices);
     let transform = Mat4::from_euler_angles(0., -90_f32.to_radians(), 0.);
     Object::new(mesh, transform)
 }
 
+#[allow(dead_code)]
 pub fn load_texture(filename: &str) -> Texture {
     todo!();
 }

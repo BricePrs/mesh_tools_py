@@ -1,4 +1,3 @@
-use crate::renderer::geometry::mesh::Mesh;
 use crate::renderer::scene::object::Object;
 use crate::renderer::Shader;
 

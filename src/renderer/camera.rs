@@ -1,5 +1,4 @@
-use std::io::{stdout, Write};
-use ultraviolet::{Mat4, projection::rh_yup::perspective_gl, Vec3};
+use ultraviolet::{projection::rh_yup::perspective_gl, Mat4, Vec3};
 
 pub use crate::controller::Controller;
 
@@ -73,7 +72,6 @@ impl Camera {
     }
 
     pub fn rotate(&mut self, delta_x: f32, delta_y: f32) {
-
         self.yaw += self.rot_speed * delta_x;
         self.pitch += self.rot_speed * delta_y;
 
@@ -88,7 +86,7 @@ impl Camera {
     }
 
     pub fn project_onto_sphere(&mut self, center: Vec3, radius: f32) {
-        self.position = -self.fwd_dir*radius+center;
+        self.position = -self.fwd_dir * radius + center;
     }
 
     fn update_camera_base(&mut self) {
@@ -101,11 +99,13 @@ impl Camera {
         self.up_dir = self.rgt_dir.cross(self.fwd_dir).normalized();
     }
 
-    pub fn set_aspect_ratio(&mut self, aspect: f32) {
-        self.aspect = aspect;
+    pub fn get_fwd_dir(&self) -> Vec3 {
+        self.fwd_dir
     }
-
-    pub fn get_fwd_dir(&self) -> Vec3 { self.fwd_dir }
-    pub fn get_rgt_dir(&self) -> Vec3 { self.rgt_dir }
-    pub fn get_up_dir(&self) -> Vec3 { self.up_dir }
+    pub fn get_rgt_dir(&self) -> Vec3 {
+        self.rgt_dir
+    }
+    pub fn get_up_dir(&self) -> Vec3 {
+        self.up_dir
+    }
 }

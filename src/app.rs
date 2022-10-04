@@ -1,13 +1,12 @@
-use std::io::{stdout, Write};
-use sdl2::libc::fflush;
-use crate::{interface, renderer};
+use crate::renderer;
 use crate::renderer::geometry::mesh;
 use crate::tools;
+use std::io::{stdout, Write};
 
+use crate::gui::Gui;
 use crate::renderer::{BatchType, Scene};
 use crate::tools::ToolManager;
 use sdl2::video::GLProfile;
-use crate::gui::Gui;
 
 pub enum Action {
     Quit,
@@ -68,7 +67,6 @@ pub fn create_window(w_width: u32, w_height: u32) {
     scene.add(BatchType::Anchor, mesh::plane_grid::new());
     scene.add(BatchType::Anchor, mesh::axis3d::new());
 
-
     unsafe {
         gl::ClearColor(0.25, 0.25, 0.25, 1.);
         gl::Enable(gl::DEPTH_TEST);
@@ -83,7 +81,6 @@ pub fn create_window(w_width: u32, w_height: u32) {
     let mut frame_count = 0;
 
     'main_loop: loop {
-
         let delta_time = frame_time.elapsed().as_secs_f32();
         frame_time = std::time::Instant::now();
         frame_count += 1;
@@ -97,7 +94,6 @@ pub fn create_window(w_width: u32, w_height: u32) {
 
         for action in tool_manager.handle_inputs(&mut event_pump) {
             match action {
-
                 Action::Quit => break 'main_loop,
 
                 Action::SwapCursorMode => {
@@ -106,7 +102,6 @@ pub fn create_window(w_width: u32, w_height: u32) {
                         .mouse()
                         .set_relative_mouse_mode(!is_cursor_displayed);
                 }
-
             }
         }
 
@@ -114,10 +109,9 @@ pub fn create_window(w_width: u32, w_height: u32) {
 
         unsafe {
             renderer::draw_scene(&scene, tool_manager.get_controller().get_camera());
-            gui.render();
+            //gui.render();
         }
 
         win.gl_swap_window();
-
     }
 }

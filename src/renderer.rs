@@ -21,10 +21,12 @@ pub unsafe fn draw_scene(scene: &Scene, camera: &Camera) {
     scene.draw(camera);
 }
 
+#[allow(dead_code)]
 pub fn clear_error() {
     unsafe { while gl::GetError() != gl::NO_ERROR {} }
 }
 
+#[allow(dead_code)]
 pub fn get_error() {
     let mut error = false;
     unsafe {

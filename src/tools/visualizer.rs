@@ -1,12 +1,12 @@
-use sdl2::{keyboard::Keycode, EventPump};
 use sdl2::mouse::MouseButton;
+use sdl2::{keyboard::Keycode, EventPump};
 use ultraviolet::Vec3;
 
 use super::ToolManager;
 
 use crate::app::Action;
-use crate::renderer::{Camera};
-use crate::controller::{Controller, ControlMode};
+use crate::controller::{ControlMode, Controller};
+use crate::renderer::Camera;
 
 pub struct Visualizer {
     camera_controller: Controller,
@@ -16,8 +16,9 @@ pub struct Visualizer {
 }
 
 impl ToolManager for Visualizer {
-
-    fn get_controller(&self) -> &Controller { &self.camera_controller }
+    fn get_controller(&self) -> &Controller {
+        &self.camera_controller
+    }
 
     fn handle_inputs(&mut self, event_pump: &mut EventPump) -> Vec<Action> {
         let mut action_vec = Vec::new();
@@ -28,7 +29,6 @@ impl ToolManager for Visualizer {
                 Event::Quit { .. } => action_vec.push(Action::Quit),
 
                 Event::MouseMotion { xrel, yrel, .. } => {
-
                     if self.mouse_displayed && self.mouse_left_pressed {
                         self.camera_controller.mouse_inputs[0] = -xrel as f32;
                         self.camera_controller.mouse_inputs[1] = -yrel as f32;
@@ -50,21 +50,17 @@ impl ToolManager for Visualizer {
                     self.camera_controller.mouse_inputs[2] = y as f32;
                 }
 
-                Event::MouseButtonDown { mouse_btn, .. } => {
-                    match mouse_btn {
-                        MouseButton::Left => self.mouse_left_pressed = true,
-                        MouseButton::Right => self.mouse_right_pressed = true,
-                        _ => (),
-                    }
-                }
+                Event::MouseButtonDown { mouse_btn, .. } => match mouse_btn {
+                    MouseButton::Left => self.mouse_left_pressed = true,
+                    MouseButton::Right => self.mouse_right_pressed = true,
+                    _ => (),
+                },
 
-                Event::MouseButtonUp { mouse_btn, .. } => {
-                    match mouse_btn {
-                        MouseButton::Left => self.mouse_left_pressed = false,
-                        MouseButton::Right => self.mouse_right_pressed = false,
-                        _ => (),
-                    }
-                }
+                Event::MouseButtonUp { mouse_btn, .. } => match mouse_btn {
+                    MouseButton::Left => self.mouse_left_pressed = false,
+                    MouseButton::Right => self.mouse_right_pressed = false,
+                    _ => (),
+                },
 
                 Event::KeyDown { keycode, .. } => {
                     match self.handle_key_down(keycode.unwrap()) {
@@ -87,7 +83,6 @@ impl ToolManager for Visualizer {
         action_vec
     }
 
-
     fn render_set_up(&mut self, delta_time: f32) {
         self.camera_controller.apply_inputs(delta_time);
         if self.mouse_displayed {
@@ -97,7 +92,6 @@ impl ToolManager for Visualizer {
 }
 
 impl Visualizer {
-
     pub fn new(w_width: f32, w_height: f32) -> Self {
         let camera = Camera::new(
             Vec3::new(0., 0., -1.),
@@ -117,11 +111,12 @@ impl Visualizer {
 
     pub fn switch_controller(&mut self) {
         match self.camera_controller.get_mode() {
-            ControlMode::Absolute(data) => {
+            ControlMode::Absolute(_) => {
                 let radius = self.camera_controller.get_scale();
                 let camera = self.camera_controller.get_camera();
                 let center = camera.get_position().clone() + camera.get_fwd_dir() * radius;
-                self.camera_controller = Controller::new_look_at_anchor(camera.clone(), center, radius, 10.);
+                self.camera_controller =
+                    Controller::new_look_at_anchor(camera.clone(), center, radius, 10.);
             }
             ControlMode::LookAtAnchor(data) => {
                 self.camera_controller = Controller::new_absolute(
@@ -132,7 +127,6 @@ impl Visualizer {
         }
     }
 
-
     fn handle_key_down(&mut self, keycode: Keycode) -> Option<Action> {
         match keycode {
             Keycode::Escape => Some(Action::Quit),
@@ -140,19 +134,19 @@ impl Visualizer {
             Keycode::Z => {
                 self.camera_controller.key_inputs[1] = 1.;
                 None
-            },
+            }
             Keycode::Q => {
                 self.camera_controller.key_inputs[0] = -1.;
                 None
-            },
+            }
             Keycode::S => {
                 self.camera_controller.key_inputs[1] = -1.;
                 None
-            },
+            }
             Keycode::D => {
                 self.camera_controller.key_inputs[0] = 1.;
                 None
-            },
+            }
 
             _ => None,
         }
@@ -163,19 +157,19 @@ impl Visualizer {
             Keycode::Z => {
                 self.camera_controller.key_inputs[1] = 0.;
                 None
-            },
+            }
             Keycode::Q => {
                 self.camera_controller.key_inputs[0] = 0.;
                 None
-            },
+            }
             Keycode::S => {
                 self.camera_controller.key_inputs[1] = 0.;
                 None
-            },
+            }
             Keycode::D => {
                 self.camera_controller.key_inputs[0] = 0.;
                 None
-            },
+            }
 
             Keycode::Tab => {
                 self.mouse_displayed = !self.mouse_displayed;
