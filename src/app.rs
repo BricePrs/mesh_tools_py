@@ -48,9 +48,6 @@ pub fn create_window(w_width: u32, w_height: u32) {
 
     gl::load_with(|f_name| video_subsystem.gl_get_proc_address(f_name) as *const _);
 
-    video_subsystem
-        .gl_set_swap_interval(sdl2::video::SwapInterval::VSync)
-        .unwrap();
     sdl_context
         .mouse()
         .set_relative_mouse_mode(!is_cursor_displayed);
@@ -61,8 +58,8 @@ pub fn create_window(w_width: u32, w_height: u32) {
 
     let mut scene = Scene::new();
 
-    //scene.add(BatchType::Default, interface::file::load_mesh("flavieux.ply", 100.));
-    scene.add(BatchType::Default, mesh::cube::new());
+    scene.add(BatchType::Default, crate::interface::file::load_mesh("flavieux.ply", 100.));
+    //scene.add(BatchType::Default, mesh::colored_cube::new());
 
     scene.add(BatchType::Anchor, mesh::plane_grid::new());
     scene.add(BatchType::Anchor, mesh::axis3d::new());
