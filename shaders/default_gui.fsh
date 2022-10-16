@@ -16,10 +16,9 @@ void main() {
     ivec2 iCoords = ivec2(u_resolution * uv);
     for (int i = 0; i < texture_count; i++) {
         ivec2 tex_size = textureSize(u_textures[i], 0);
-        ivec2 delta_coords = (u_texture_pos[i] - iCoords)/u_resolution;
-        if (delta_coords == ivec2(0)) {
-            FragColor = texelFetch(u_textures[i], iCoords, 0);
+        ivec2 delta_coords = (iCoords - u_texture_pos[i]);
+        if (delta_coords/tex_size == ivec2(0)) {
+            FragColor = texelFetch(u_textures[i], delta_coords, 0);
         }
     }
-    FragColor = vec4(uv, 0., 1.);
 }

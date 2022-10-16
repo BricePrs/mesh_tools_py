@@ -1,12 +1,13 @@
-use crate::renderer;
+use crate::{interface, renderer};
 use crate::renderer::geometry::mesh;
 use crate::tools;
 use std::io::{stdout, Write};
 
-use crate::gui::Gui;
+use crate::gui::{Gui, Widget};
 use crate::renderer::{BatchType, Scene};
 use crate::tools::ToolManager;
 use sdl2::video::GLProfile;
+use ultraviolet::{IVec2, Vec2};
 
 pub enum Action {
     Quit,
@@ -27,7 +28,7 @@ pub fn create_window(w_width: u32, w_height: u32) {
     // Set the context into debug mode
     gl_attr.set_context_flags().debug().set();
 
-    gl_attr.set_context_version(3, 3);
+    gl_attr.set_context_version(4, 5);
 
     // Enable anti-aliasing
     gl_attr.set_multisample_buffers(1);
@@ -40,7 +41,7 @@ pub fn create_window(w_width: u32, w_height: u32) {
         .unwrap();
 
     assert_eq!(gl_attr.context_profile(), GLProfile::Core);
-    assert_eq!(gl_attr.context_version(), (3, 3));
+    assert_eq!(gl_attr.context_version(), (4, 5));
 
     /* create a new OpenGL context and make it current */
     let gl_context = win.gl_create_context().unwrap();
@@ -48,18 +49,21 @@ pub fn create_window(w_width: u32, w_height: u32) {
 
     gl::load_with(|f_name| video_subsystem.gl_get_proc_address(f_name) as *const _);
 
+    video_subsystem
+        .gl_set_swap_interval(sdl2::video::SwapInterval::VSync)
+        .unwrap();
     sdl_context
         .mouse()
         .set_relative_mouse_mode(!is_cursor_displayed);
 
-    let mut tool_manager = tools::Visualizer::new(w_width as f32, w_height as f32);
+    let mut gui = Gui::new(w_width, w_height);
 
-    let gui = Gui::new(w_width, w_height);
+    let mut tool_manager = tools::Visualizer::new(w_width as f32, w_height as f32, &mut gui);
 
     let mut scene = Scene::new();
 
-    scene.add(BatchType::Default, crate::interface::file::load_mesh("flavieux.ply", 100.));
-    //scene.add(BatchType::Default, mesh::colored_cube::new());
+    scene.add(BatchType::Default, interface::file::load_mesh("flav-v1.2.ply", 100.));
+    //scene.add(BatchType::Default, mesh::cube::new());
 
     scene.add(BatchType::Anchor, mesh::plane_grid::new());
     scene.add(BatchType::Anchor, mesh::axis3d::new());
@@ -68,6 +72,8 @@ pub fn create_window(w_width: u32, w_height: u32) {
         gl::ClearColor(0.25, 0.25, 0.25, 1.);
         gl::Enable(gl::DEPTH_TEST);
         gl::Enable(gl::BLEND);
+        gl::Enable(gl::CULL_FACE);
+        gl::CullFace(gl::BACK);
         gl::DepthFunc(gl::LESS);
         gl::BlendFunc(gl::SRC_ALPHA, gl::ONE_MINUS_SRC_ALPHA);
     }
@@ -106,7 +112,7 @@ pub fn create_window(w_width: u32, w_height: u32) {
 
         unsafe {
             renderer::draw_scene(&scene, tool_manager.get_controller().get_camera());
-            //gui.render();
+            gui.render();
         }
 
         win.gl_swap_window();

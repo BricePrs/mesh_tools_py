@@ -112,6 +112,18 @@ impl Shader {
     }
 
     #[allow(dead_code)]
+    pub fn set_int(&self, name: &str, val: i32) {
+        unsafe {
+            let c_name = ffi::CString::new(name).unwrap().into_bytes_with_nul();
+            let loc = gl::GetUniformLocation(self.id, c_name.as_ptr().cast());
+            if loc == -1 {
+                //println!("Could not find location of uniform : {}", name);
+            }
+            gl::Uniform1i(loc, val)
+        }
+    }
+
+    #[allow(dead_code)]
     pub fn set_vec3(&self, name: &str, val: &Vec3) {
         unsafe {
             let c_name = ffi::CString::new(name).unwrap().into_bytes_with_nul();
@@ -124,12 +136,12 @@ impl Shader {
     }
 
     #[allow(dead_code)]
-    pub fn set_ivec2(&self, name: &str, val: &IVec2) {
+    pub fn set_ivec2(&self, name: &str, val: IVec2) {
         unsafe {
             let c_name = ffi::CString::new(name).unwrap().into_bytes_with_nul();
             let loc = gl::GetUniformLocation(self.id, c_name.as_ptr().cast());
             if loc == -1 {
-                //println!("Could not find location of uniform : {}", name);
+                println!("Could not find location of uniform : {}", name);
             }
             gl::Uniform2iv(loc, 1, val.as_ptr().cast())
         }

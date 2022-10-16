@@ -1,6 +1,6 @@
-use ultraviolet::Mat4;
-use crate::renderer::scene::object::Object;
 use super::{Mesh, Vertex};
+use crate::renderer::scene::object::Object;
+use ultraviolet::Mat4;
 
 fn vertices() -> Vec<Vertex> {
     vec![

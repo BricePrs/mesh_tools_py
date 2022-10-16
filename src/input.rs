@@ -1,29 +1,43 @@
-use sdl2::mouse::MouseButton;
-use sdl2::{keyboard::Keycode, EventPump};
-use ultraviolet::{IVec2, Vec3};
-
-use super::ToolManager;
-
+use sdl2::EventPump;
+use sdl2::keyboard::Keycode;
 use crate::app::Action;
-use crate::controller::{ControlMode, Controller};
-use crate::gui::{Gui, Widget};
-use crate::renderer::Camera;
 
-pub struct Visualizer {
-    camera_controller: Controller,
-    mouse_displayed: bool,
-    mouse_left_pressed: bool,
-    mouse_right_pressed: bool,
-    move_gui: usize,
-    select_gui: usize,
+enum InputTimeMode {
+    Continuous,
+    Discrete,
 }
 
-impl ToolManager for Visualizer {
-    fn get_controller(&self) -> &Controller {
-        &self.camera_controller
+struct KeysHolder {
+    keys_down: Vec<Keycode>,
+    keys_up: Vec<Keycode>,
+}
+
+enum InputAxisEntry {
+    Keyboard(KeysHolder),
+    WASD(InputTimeMode),
+    Mouse(InputTimeMode),
+}
+
+struct AxisParam {
+    field_nbr: usize,
+    input_axis_entry: InputAxisEntry
+}
+
+pub struct InputManager {
+    axes: Vec<f32>,
+    axes_param: Vec<AxisParam>,
+}
+
+impl InputManager {
+
+    pub fn new() -> Self {
+        Self {
+            axes: Vec::new(),
+            axes_param: Vec::new(),
+        }
     }
 
-    fn handle_inputs(&mut self, event_pump: &mut EventPump) -> Vec<Action> {
+    fn handle_inputs(&mut self) {
         let mut action_vec = Vec::new();
 
         for event in event_pump.poll_iter() {
@@ -83,56 +97,6 @@ impl ToolManager for Visualizer {
             };
         }
 
-        action_vec
-    }
-
-    fn render_set_up(&mut self, delta_time: f32) {
-        self.camera_controller.apply_inputs(delta_time);
-        if self.mouse_displayed {
-            self.camera_controller.key_inputs = [0., 0.];
-        }
-    }
-}
-
-impl Visualizer {
-    pub fn new(w_width: f32, w_height: f32, gui: &mut Gui) -> Self {
-
-        let camera = Camera::new(
-            Vec3::new(0., 0., -1.),
-            Vec3::new(0., 1., 0.),
-            0.,
-            0.,
-            70_f32.to_radians(),
-            w_width / w_height,
-        );
-        let mut move_widget = Widget::new("move_tex.png", IVec2::new(50, 5));
-        move_widget.is_enabled = false;
-        Visualizer {
-            camera_controller: Controller::new_look_at_anchor(camera, Vec3::zero(), 20., 10.),
-            mouse_displayed: true,
-            mouse_left_pressed: false,
-            mouse_right_pressed: false,
-            move_gui: gui.add_widget(move_widget),
-            select_gui: 3,
-        }
-    }
-
-    pub fn switch_controller(&mut self) {
-        match self.camera_controller.get_mode() {
-            ControlMode::Absolute(_) => {
-                let radius = self.camera_controller.get_scale();
-                let camera = self.camera_controller.get_camera();
-                let center = camera.get_position().clone() + camera.get_fwd_dir() * radius;
-                self.camera_controller =
-                    Controller::new_look_at_anchor(camera.clone(), center, radius, 10.);
-            }
-            ControlMode::LookAtAnchor(data) => {
-                self.camera_controller = Controller::new_absolute(
-                    self.camera_controller.get_camera().clone(),
-                    data.get_radius(),
-                );
-            }
-        }
     }
 
     fn handle_key_down(&mut self, keycode: Keycode) -> Option<Action> {

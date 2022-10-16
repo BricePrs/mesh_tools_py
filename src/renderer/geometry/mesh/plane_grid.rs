@@ -1,6 +1,6 @@
-use ultraviolet::Mat4;
-use crate::renderer::scene::object::Object;
 use super::{Mesh, Vertex};
+use crate::renderer::scene::object::Object;
+use ultraviolet::Mat4;
 
 static LINE_NBR: i32 = 500;
 static COLOR: f32 = 0.5;

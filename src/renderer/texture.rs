@@ -10,6 +10,7 @@ impl Texture {
     pub fn new(file_name: &str) -> Self {
         let buffer = image::open(format!("textures/{}", file_name))
             .unwrap()
+            .flipv()
             .to_rgba8();
 
         let size = buffer.dimensions();
@@ -52,6 +53,8 @@ impl Texture {
                 buffer.as_raw().as_ptr() as *const c_void,
             );
             gl::GenerateMipmap(gl::TEXTURE_2D);
+            gl::BindTexture(gl::TEXTURE_2D, 0);
+
         }
         Self { id }
     }

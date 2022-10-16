@@ -1,14 +1,13 @@
-pub(crate) mod render_batch;
 pub mod object;
+pub(crate) mod render_batch;
 
 use std::collections::HashMap;
 
-use render_batch::{BATCH_TYPES, RenderBatch};
 use object::Object;
+use render_batch::{RenderBatch, BATCH_TYPES};
 
-
-pub use render_batch::BatchType;
 use crate::renderer::Camera;
+pub use render_batch::BatchType;
 
 pub struct Scene {
     render_queue: HashMap<BatchType, RenderBatch>,
@@ -21,9 +20,7 @@ impl Scene {
             render_queue.insert(batch_type.clone(), RenderBatch::map(batch_type));
         }
 
-        Self {
-            render_queue,
-        }
+        Self { render_queue }
     }
 
     pub fn add(&mut self, batch_type: BatchType, object: Object) {
@@ -52,5 +49,4 @@ impl Scene {
             }
         }
     }
-
 }
