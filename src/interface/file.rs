@@ -2,7 +2,7 @@ use crate::renderer::geometry::mesh::{Mesh, Vertex};
 use crate::renderer::{scene::object::Object, texture::Texture};
 use std::fs::File;
 use std::io::{BufRead, BufReader, Lines};
-use ultraviolet::Mat4;
+use ultraviolet::{Mat4, Vec3};
 
 #[allow(dead_code)]
 pub fn go_to_tag(lines: &mut Lines<BufReader<File>>, tag: &str) -> Vec<String> {
@@ -68,7 +68,7 @@ pub fn load_mesh(file_name: &str, scale: f32) -> Object {
     }
 
     let mesh = Mesh::new(vertices, indices);
-    let transform = Mat4::from_euler_angles(0., -90_f32.to_radians(), 0.);
+    let transform = Mat4::from_translation(Vec3::new(0., -30., 20.));
     Object::new(mesh, transform)
 }
 

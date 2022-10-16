@@ -72,8 +72,8 @@ pub fn create_window(w_width: u32, w_height: u32) {
         gl::ClearColor(0.25, 0.25, 0.25, 1.);
         gl::Enable(gl::DEPTH_TEST);
         gl::Enable(gl::BLEND);
-        gl::Enable(gl::CULL_FACE);
-        gl::CullFace(gl::BACK);
+        //gl::Enable(gl::CULL_FACE);
+        //gl::CullFace(gl::BACK);
         gl::DepthFunc(gl::LESS);
         gl::BlendFunc(gl::SRC_ALPHA, gl::ONE_MINUS_SRC_ALPHA);
     }
