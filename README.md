@@ -69,5 +69,7 @@ python3 examples/example.py
 
 ![Screenshot from 2022-10-17 00-54-54](https://user-images.githubusercontent.com/44588205/196063695-d8acaf28-9575-42dd-b2b8-4a00f0c182af.png)
 
+This video has a low framerate ! The render time for a frame is way less than 16ms.
+
 [Demo.webm](https://user-images.githubusercontent.com/44588205/196064095-765b49f5-364a-450b-b37d-00ca1630f92b.webm)
 
